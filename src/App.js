@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import Navbar from './components/Navbar';
 
 function App() {
   useEffect(() => {
@@ -12,7 +14,25 @@ function App() {
     // fetchData();
   }, []);
 
-  return <div>HHhhh</div>;
+  return (
+    <div>
+      <Navbar />
+      <StyledParagraph>
+        Lyrics Finder helps to find lyrics of a song.
+        <br />
+        Search by song or artist to get results.
+      </StyledParagraph>
+    </div>
+  );
 }
 
 export default App;
+
+const StyledParagraph = styled.p`
+  font-size: 2rem;
+  padding: 0 20px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 10rem;
+  color: #1d1d1d;
+`;

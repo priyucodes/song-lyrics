@@ -8,6 +8,11 @@ html {
 }
 body {
   font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(to left, #91eae4, #7f7fd5);
 }
-/* h1 {
-} */
+h1 {
+  font-size: 4rem;
+}
+h2 {
+  font-size: 3rem;
+}
