@@ -33,7 +33,7 @@ const SongDetails = () => {
     const displayStyle = {
       display: showVideo ? 'block' : 'none',
     };
-    console.log(song.response.song.media);
+
     setReactPlayer(
       <ReactPlayer
         url={
