@@ -1,28 +1,71 @@
 import { useEffect, useState } from 'react';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
 import Navbar from './components/Navbar';
+import SongDetails from './components/SongDetails';
+import SongsList from './components/SongsList';
 
 function App() {
-  useEffect(() => {
-    // const fetchData = async () => {
-    //   const data = await fetch(
-    //     'https://api.genius.com/songs/5830307?access_token=process.env.REACT_APP_CLIENT_ACCESS_TOKEN'
-    //   );
-    //   const res = await data.json();
-    //   console.log(res);
-    // };
-    // fetchData();
-  }, []);
+  const [searchedData, setSearchedData] = useState([]);
+
+  if (searchedData?.response?.hits.length === 0) {
+    toast.error('No songs found', {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  }
 
   return (
-    <div>
-      <Navbar />
-      <StyledParagraph>
-        Lyrics Finder helps to find lyrics of a song.
-        <br />
-        Search by song or artist to get results.
-      </StyledParagraph>
-    </div>
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        draggable
+        pauseOnHover
+        style={{ fontSize: '2rem' }}
+      />
+      <Routes>
+        <Route
+          path="/search"
+          element={
+            <>
+              <Navbar
+                searchedData={searchedData}
+                setSearchedData={setSearchedData}
+              />
+
+              {searchedData?.response?.hits.length > 0 ? (
+                <Outlet />
+              ) : (
+                <StyledParagraph>
+                  Lyrics Finder helps to find lyrics of a song.
+                  <br />
+                  Search by song or artist to get results
+                </StyledParagraph>
+              )}
+            </>
+          }
+        >
+          <Route
+            path=":input"
+            element={
+              <>
+                <SongsList searchedData={searchedData} />
+              </>
+            }
+          />
+        </Route>
+        <Route path="/lyrics/:song/:id" element={<SongDetails />} />
+        <Route path="*" element={<Navigate to="/search" replace />} />
+      </Routes>
+    </>
   );
 }
 

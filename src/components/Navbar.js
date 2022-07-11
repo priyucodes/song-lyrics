@@ -1,11 +1,31 @@
 import styled from 'styled-components';
-const Navbar = () => {
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { fetchSearchedSongs } from '../libs/fetchApi';
+const Navbar = ({ searchedData, setSearchedData }) => {
+  const navigate = useNavigate();
+  const [input, setInput] = useState('');
+  const searchHandler = async () => {
+    const res = await fetchSearchedSongs(input);
+
+    setSearchedData(res);
+    navigate(`${input}`);
+    setInput('');
+  };
+
+
   return (
     <Header>
       <h1>Lyrics Finder Pro</h1>
       <InputContainer>
-        <Input type="text" placeholder="Search for songs" />
-        <Button>
+        <Input
+          type="text"
+          placeholder="Search for songs"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+        />
+        <Button onClick={searchHandler}>
           <Svg
             aria-labelledby="title desc"
             role="img"
