@@ -147,6 +147,9 @@ const Container = styled.div`
 
   justify-content: center;
   width: 100%;
+  @media (min-width: 300px) and (max-width: 500px) {
+    margin-left: 20rem;
+  }
 
   div {
     margin-top: 2rem;
