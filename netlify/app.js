@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const scrapeData = require('./scrapeData');
+const scrapeData = require('./functions/scrapeData');
 const port = 3001;
 app.use(cors());
 
