@@ -33,14 +33,25 @@ const SongDetails = () => {
     const displayStyle = {
       display: showVideo ? 'block' : 'none',
     };
+    console.log(song.response.song.media);
     setReactPlayer(
       <ReactPlayer
-        url={song.response.song.media[0].url}
+        url={
+          song.response.song.media.filter(
+            item => item.provider === 'youtube'
+          )[0].url ??
+          song.response.song.media.filter(
+            item => item.provider === 'soundcloud'
+          )[0].url
+        }
         playing={!isPlaying ? true : false}
         style={displayStyle}
         config={{
           youtube: {
             playerVars: { showinfo: 1 },
+          },
+          soundcloud: {
+            options: { autoPlay: true },
           },
         }}
       />
