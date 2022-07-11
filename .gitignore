@@ -7,7 +7,7 @@
 /api/node_modules
 # testing
 /coverage
-
+/api
 # production
 /build
 

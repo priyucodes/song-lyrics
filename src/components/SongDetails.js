@@ -20,7 +20,10 @@ const SongDetails = () => {
   }, [id]);
   const getLyricsHandler = async () => {
     // const path = url.split('/')[3];
-    const data = await fetch(`http://127.0.0.1:3001/lyrics/${songPath}`);
+    const data = await fetch(
+      `https://get-lyrics-api.herokuapp.com/lyrics/${songPath}`
+    );
+
     const { lyrics } = await data.json();
 
     setLyrics(lyrics);
