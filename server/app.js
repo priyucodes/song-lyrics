@@ -6,7 +6,6 @@ const port = 3001;
 app.use(cors());
 
 app.get('/lyrics/:slug', async (req, res) => {
-  console.log();
   const lyrics = await scrapeData(`https://genius.com/${req.params.slug}`);
   res.json({ lyrics });
 });

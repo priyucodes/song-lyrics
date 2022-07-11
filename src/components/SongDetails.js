@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-
+import ReactPlayer from 'react-player';
 import { fetchSongsById } from '../libs/fetchApi';
 const SongDetails = () => {
   const [song, setSong] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [reactPlayer, setReactPlayer] = useState(null);
   const [lyrics, setLyrics] = useState('');
   const { id, song: songPath } = useParams();
   useEffect(() => {
@@ -25,9 +26,21 @@ const SongDetails = () => {
   };
   const playSongsHandler = async song => {
     setIsPlaying(!isPlaying);
-    console.log(song.response.song.media[0].url);
+    setReactPlayer(
+      <ReactPlayer
+        url={song.response.song.media[0].url}
+        playing={isPlaying ? true : false}
+        config={{
+          youtube: {
+            playerVars: { showinfo: 1 },
+          },
+        }}
+      />
+    );
   };
-  console.log(song);
+  const pauseHandler = () => {
+    setReactPlayer(null);
+  };
   return (
     <Container>
       <Link
@@ -55,7 +68,7 @@ const SongDetails = () => {
           <h3>{song.response.song.full_title}</h3>
           <button onClick={getLyricsHandler}>Get Lyrics</button>
           <Controls>
-            <PlayButton onClick={song => playSongsHandler(song)}>
+            <PlayButton onClick={() => playSongsHandler(song)}>
               {isPlaying ? (
                 <svg
                   stroke="currentColor"
@@ -73,7 +86,7 @@ const SongDetails = () => {
                   <svg
                     stroke="currentColor"
                     fill="currentColor"
-                    stroke-width="0"
+                    strokeWidth="0"
                     viewBox="0 0 512 512"
                     height="1em"
                     width="1em"
@@ -85,7 +98,7 @@ const SongDetails = () => {
                 </>
               )}
             </PlayButton>
-            <PauseButton>
+            <PauseButton onClick={pauseHandler}>
               <svg
                 stroke="currentColor"
                 fill="currentColor"
@@ -98,9 +111,9 @@ const SongDetails = () => {
                 <path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm96 328c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V176c0-8.8 7.2-16 16-16h160c8.8 0 16 7.2 16 16v160z"></path>
               </svg>
             </PauseButton>
+            {reactPlayer && reactPlayer}
           </Controls>
           {lyrics.length > 1 && <LyricsPara>{lyrics}</LyricsPara>}
-          {console.log(lyrics)}
         </div>
       )}
     </Container>
@@ -151,4 +164,7 @@ const PauseButton = styled.button`
 const LyricsPara = styled.pre`
   font-size: 2rem;
   width: 500px;
+  @media (min-width: 300px) and (max-width: 500px) {
+    font-size: 1.6rem;
+  }
 `;
