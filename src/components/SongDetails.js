@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { fetchSearchedSongs, fetchSongsById } from '../libs/fetchApi';
+
+import { fetchSongsById } from '../libs/fetchApi';
 const SongDetails = () => {
   const [song, setSong] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
-  const { id } = useParams();
+  const [lyrics, setLyrics] = useState('');
+  const { id, song: songPath } = useParams();
   useEffect(() => {
     const fetchSongs = async () => {
       const currentSong = await fetchSongsById(id);
@@ -15,6 +16,17 @@ const SongDetails = () => {
     };
     fetchSongs();
   }, [id]);
+  const getLyricsHandler = async () => {
+    // const path = url.split('/')[3];
+    const data = await fetch(`http://127.0.0.1:3001/lyrics/${songPath}`);
+    const { lyrics } = await data.json();
+
+    setLyrics(lyrics);
+  };
+  const playSongsHandler = async song => {
+    setIsPlaying(!isPlaying);
+    console.log(song.response.song.media[0].url);
+  };
   console.log(song);
   return (
     <Container>
@@ -33,10 +45,7 @@ const SongDetails = () => {
       {song.length !== 0 && (
         <div>
           <img
-            src={
-              song.response.song.album?.cover_art_url ||
-              song.response.song.header_image_url
-            }
+            src={song.response.song.header_image_url}
             style={{ width: '400px', borderRadius: '10px' }}
             alt={
               song.response.song?.album?.full_title || song.response.song.title
@@ -44,14 +53,14 @@ const SongDetails = () => {
           />
           <h2>{song.response.song.title}</h2>
           <h3>{song.response.song.full_title}</h3>
-          <button>Get Lyrics</button>
+          <button onClick={getLyricsHandler}>Get Lyrics</button>
           <Controls>
-            <PlayButton onClick={() => setIsPlaying(!isPlaying)}>
+            <PlayButton onClick={song => playSongsHandler(song)}>
               {isPlaying ? (
                 <svg
                   stroke="currentColor"
                   fill="currentColor"
-                  stroke-width="0"
+                  strokeWidth="0"
                   viewBox="0 0 512 512"
                   height="1em"
                   width="1em"
@@ -60,24 +69,27 @@ const SongDetails = () => {
                   <path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm-16 328c0 8.8-7.2 16-16 16h-48c-8.8 0-16-7.2-16-16V176c0-8.8 7.2-16 16-16h48c8.8 0 16 7.2 16 16v160zm112 0c0 8.8-7.2 16-16 16h-48c-8.8 0-16-7.2-16-16V176c0-8.8 7.2-16 16-16h48c8.8 0 16 7.2 16 16v160z"></path>
                 </svg>
               ) : (
-                <svg
-                  stroke="currentColor"
-                  fill="currentColor"
-                  stroke-width="0"
-                  viewBox="0 0 512 512"
-                  height="1em"
-                  width="1em"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm115.7 272l-176 101c-15.8 8.8-35.7-2.5-35.7-21V152c0-18.4 19.8-29.8 35.7-21l176 107c16.4 9.2 16.4 32.9 0 42z"></path>
-                </svg>
+                <>
+                  <svg
+                    stroke="currentColor"
+                    fill="currentColor"
+                    stroke-width="0"
+                    viewBox="0 0 512 512"
+                    height="1em"
+                    width="1em"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm115.7 272l-176 101c-15.8 8.8-35.7-2.5-35.7-21V152c0-18.4 19.8-29.8 35.7-21l176 107c16.4 9.2 16.4 32.9 0 42z"></path>
+                  </svg>
+                  <audio src={song.response.song.media[0].url}></audio>
+                </>
               )}
             </PlayButton>
             <PauseButton>
               <svg
                 stroke="currentColor"
                 fill="currentColor"
-                stroke-width="0"
+                strokeWidth="0"
                 viewBox="0 0 512 512"
                 height="1em"
                 width="1em"
@@ -87,6 +99,8 @@ const SongDetails = () => {
               </svg>
             </PauseButton>
           </Controls>
+          {lyrics.length > 1 && <LyricsPara>{lyrics}</LyricsPara>}
+          {console.log(lyrics)}
         </div>
       )}
     </Container>
@@ -132,4 +146,9 @@ const Controls = styled.div`
 const PlayButton = styled.button``;
 const PauseButton = styled.button`
   margin-left: 20px;
+`;
+
+const LyricsPara = styled.pre`
+  font-size: 2rem;
+  width: 500px;
 `;
